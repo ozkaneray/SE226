@@ -1,0 +1,71 @@
+n = int(input("Enter number of tasks: "))
+
+tasks = {}
+
+for i in range(n):
+    name = input("Enter task name: ")
+    dep_count = int(input(f"How many dependencies for {name}? "))
+
+    dep_list = []
+    for j in range(dep_count):
+        dep = input(f"Enter dependency {j + 1}: ")
+        dep_list.append(dep)
+
+    tasks[name] = dep_list
+
+print("\nTASK STRUCTURE:")
+for t in tasks:
+    print(f"{t} --> {tasks[t]}")
+
+print("\nINITIAL TASKS (no dependencies):")
+initials = []
+for t in tasks:
+    if len(tasks[t]) == 0:
+        initials.append(t)
+
+if len(initials) == 0:
+    print("None")
+else:
+    for t in initials:
+        print(t)
+
+order = []
+done = set()
+left = list(tasks.keys())
+
+print("\nEXECUTION ORDER:")
+
+flag = True
+step_num = 1
+
+while len(left) > 0 and flag:
+    flag = False
+    remove_list = []
+
+    for t in left:
+        can_run = True
+        for d in tasks[t]:
+            if d not in done:
+                can_run = False
+                break
+
+        if can_run:
+            print(f"Step {step_num}: {t}")
+            order.append(t)
+            done.add(t)
+            remove_list.append(t)
+            flag = True
+            step_num += 1
+
+    for r in remove_list:
+        left.remove(r)
+
+if len(left) > 0:
+    if len(order) == 0:
+        print("No task can be started.")
+    print("ERROR: Circular dependency detected!")
+    print("These tasks could not be completed:")
+    for t in left:
+        print(t)
+else:
+    print("ALL TASKS COMPLETED SUCCESSFULLY")
